@@ -5,10 +5,12 @@ import org.example.domain.entity.Cliente;
 import org.example.domain.entity.ItemPedido;
 import org.example.domain.entity.Pedido;
 import org.example.domain.entity.Produto;
+import org.example.domain.enums.StatusPedido;
 import org.example.domain.repository.Clientes;
 import org.example.domain.repository.ItensPedidos;
 import org.example.domain.repository.Pedidos;
 import org.example.domain.repository.Produtos;
+import org.example.exception.PedidoNaoEncontradoException;
 import org.example.exception.RegrasNegocioException;
 import org.example.rest.dto.ItemPedidoDTO;
 import org.example.rest.dto.PedidoDTO;
@@ -18,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -42,6 +45,7 @@ public class PedidoServiceImpl implements PedidoService {
         pedido.setDataPedido(LocalDate.now());
         pedido.setTotal(dto.getTotal());
         pedido.setCliente(cliente);
+        pedido.setStatus(StatusPedido.REALIZADO);
 
         List<ItemPedido> itemPedido = converterItems(pedido,dto.getItems());
         repository.save(pedido);
@@ -49,6 +53,21 @@ public class PedidoServiceImpl implements PedidoService {
         pedido.setItens(itemPedido);
 
         return pedido;
+    }
+
+    @Override
+    public Optional<Pedido> obterPedidoCompleto(Integer id) {
+        return repository.findByIdFetchItens(id);
+    }
+
+    @Override
+    @Transactional
+    public void atualizaStatus(Integer id, StatusPedido statusPedido) {
+        repository.findById(id)
+                .map( pedido -> {
+                    pedido.setStatus(statusPedido);
+                    return repository.save(pedido);})
+                .orElseThrow( () -> new PedidoNaoEncontradoException() );
     }
 
     private List<ItemPedido> converterItems(Pedido pedido, List<ItemPedidoDTO> itens){
@@ -65,8 +84,8 @@ public class PedidoServiceImpl implements PedidoService {
 
                   ItemPedido itemPedido = new ItemPedido();
 
-                  itemPedido.setPedido(pedido);
                   itemPedido.setQuantitade(dto.getQuantidade());
+                  itemPedido.setPedido(pedido);
                   itemPedido.setProduto(produto);
                   return itemPedido;})
                 .collect(Collectors.toList() );

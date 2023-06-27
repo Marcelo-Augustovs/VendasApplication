@@ -1,6 +1,8 @@
 package org.example.domain.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,9 +22,11 @@ public class Produto {
     private Integer id;
 
     @Column(name = "descricao")
+    @NotEmpty(message = "Campo Descrição é obrigatório.")
     private String descricao;
 
     @Column(name = "preco_unitario")
+    @NotNull(message = "Campo preço é obrigatório.")
     private BigDecimal preco;
 
 }

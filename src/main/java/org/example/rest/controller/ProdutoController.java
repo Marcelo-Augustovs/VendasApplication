@@ -1,5 +1,6 @@
 package org.example.rest.controller;
 
+import jakarta.validation.Valid;
 import org.example.domain.entity.Produto;
 import org.example.domain.repository.Produtos;
 import org.springframework.data.domain.Example;
@@ -22,7 +23,7 @@ public class ProdutoController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Produto save( @RequestBody Produto produto){
+    public Produto save( @RequestBody @Valid Produto produto){
         return produtos.save(produto);
     }
 
@@ -45,7 +46,7 @@ public class ProdutoController {
 
     @PutMapping("{id}")
     public Produto update(@PathVariable Integer id,
-                          @RequestBody Produto produto){
+                          @RequestBody @Valid Produto produto){
       return produtos.findById(id)
                 .map(produtoExistente -> {
                     produto.setId(produtoExistente.getId());

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.example.domain.enums.StatusPedido;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -29,6 +30,10 @@ public class Pedido {
 
     @Column(name = "total",length = 2,precision = 20)
     private BigDecimal total;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private StatusPedido status;
 
     @OneToMany(mappedBy = "pedido")
     private List<ItemPedido> itens;
