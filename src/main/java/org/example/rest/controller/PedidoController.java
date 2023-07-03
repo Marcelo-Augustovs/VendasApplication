@@ -1,5 +1,6 @@
 package org.example.rest.controller;
 
+import jakarta.validation.Valid;
 import org.example.domain.entity.ItemPedido;
 import org.example.domain.entity.Pedido;
 import org.example.domain.enums.StatusPedido;
@@ -34,7 +35,7 @@ public class PedidoController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Integer save (@RequestBody PedidoDTO dto){
+    public Integer save (@RequestBody @Valid PedidoDTO dto){
         Pedido pedido = service.salvar(dto);
         return pedido.getId();
     }
@@ -51,7 +52,7 @@ public class PedidoController {
     @PatchMapping({"{id}"})
     @ResponseStatus(NO_CONTENT)
     public void updateStatus(@PathVariable Integer id ,
-                             @RequestBody AtualizaçãoStatusPedidoDTO dto){
+                             @RequestBody @Valid AtualizaçãoStatusPedidoDTO dto){
 
         String novoStatus = dto.getNovoStatus();
         service.atualizaStatus(id, StatusPedido.valueOf(novoStatus));
