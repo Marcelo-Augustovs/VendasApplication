@@ -1,7 +1,6 @@
 package org.example.domain.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,13 +17,25 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Users implements UserDetails {
+public class User implements UserDetails {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "id")
     private String id;
+
+    @Column(name = "login")
     private String login;
+    @Column(name = "password")
     private String password;
+    @Column(name = "role")
     private UserRole role;
 
+    public User(String login,String password,UserRole role){
+        this.login = login;
+        this.password = password;
+        this.role = role;
+    }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if(this.role == UserRole.ADMIN){
